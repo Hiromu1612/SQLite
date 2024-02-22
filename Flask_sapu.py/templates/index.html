@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>書籍管理アプリ</title>
+</head>
+<body>
+    <h1>123書店</h1>
+    <h2>今月の新刊一覧</h2>
+
+    {% if books==[] %}
+        <p>今月の新刊はありません</p>
+    
+    {% else %}
+        <table border="1"> 
+                <tr>
+                    <th>タイトル</th>
+                    <th>金額</th>
+                    <th>入荷日</th>
+                </tr>
+
+            {% for book in books %} {#for文でbooksの中身を一つずつ取り出す If,for文は{% %}で囲む#} 
+                <tr>
+                    <td>{{book.title}}</td>
+                    <td>{{book.price}}円</td>
+                    <td>{{book.arrival_day}}</td>
+                    <td>
+                        <form action="/edit/{{ loop.index }}" method="post"> {#編集ボタンを押すとeditのURLにループのインデックスを渡す#}
+                            <input type="hidden" name="id" value="{{book.id}}">
+                            <input type="submit" value="編集">
+                        </form>
+                    </td>
+                    <td>
+                        <form action="/delete/{{ loop.index }}" method="post"> {#削除ボタンを押すとdeleteのURLにループのインデックスを渡す#}
+                            <input type="hidden" name="id" value="{{book.id}}">
+                            <input type="submit" value="削除">
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+
+    <a href="{{url_for('form')}}">追加</a>
+</body>
+</html>
