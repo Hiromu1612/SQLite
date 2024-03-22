@@ -1,5 +1,6 @@
 from flask import Flask,render_template,request,redirect,url_for
 import sqlite3
+import traceback
 
 app = Flask(__name__)
 
@@ -9,8 +10,6 @@ def index():
     conn = sqlite3.connect(dbpath)
     cur = conn.cursor()
     
-
-
     #テーブルの作成
     sql="CREATE TABLE IF NOT EXISTS books(title TEXT,price INTEGER,arrival_day TEXT)"
     cur.execute(sql)
@@ -54,7 +53,6 @@ def register():
     conn.commit()
     cur.close()
     conn.close()
-    print(request.form)
     return redirect(url_for('index'))
 
 #削除
@@ -75,26 +73,28 @@ def delete(book_id):
     return redirect(url_for('index'))
 
 #編集
-@app.route('/edit/<int:book_id>', methods=['POST'])
+@app.route('/edit/<int:book_id>', methods=['GET','POST'])
 def edit(book_id):
-    print(request)
-    title=request.form['title'] #request.formでformから送られたデータを受け取る
-    price=request.form['price']
-    arrival_day=request.form['arrival_day']
-    
-    dbpath = 'BOOK.db'
-    conn = sqlite3.connect(dbpath)
-    cur = conn.cursor()
+    try:
+        title=request.form['title'] #request.formでformから送られたデータを受け取る
+        price=request.form['price']
+        arrival_day=request.form['arrival_day']
+        
+        dbpath = 'BOOK.db'
+        conn = sqlite3.connect(dbpath)
+        cur = conn.cursor()
 
-    #データの更新
-    sql="UPDATE books SET title=?,price=?,arrival_day=? WHERE rowid=?"
-    cur.execute(sql, (title, price, arrival_day, book_id))
+        #データの更新
+        sql="UPDATE books SET title=?,price=?,arrival_day=? WHERE rowid=?"
+        cur.execute(sql,(book_id,))
 
-    conn.commit()
-    cur.close()
-    conn.close()
+        conn.commit()
+        cur.close()
+        conn.close()
 
-    return redirect(url_for('index'))
+        return render_template('edit.html',title=title,price=price,arrival_day=arrival_day)
+    except:
+        print("エラーが発生しました")
 
 if __name__ == "__main__":
     app.run(debug=True,port=5002)

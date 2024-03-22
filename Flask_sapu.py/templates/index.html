@@ -26,8 +26,11 @@
                     <td>{{book.price}}円</td>
                     <td>{{book.arrival_day}}</td>
                     <td>
-                        <form action="/edit/{{ loop.index }}" method="post"> {#編集ボタンを押すとeditのURLにループのインデックスを渡す#}
+                        <form action="/edit" method="post"> {#編集ボタンを押すとeditのURLにループのインデックスを渡す#}
                             <input type="hidden" name="id" value="{{book.id}}">
+                            <input type="hidden" name="title" value="{{book.title}}">
+                            <input type="hidden" name="price" value="{{book.price}}">
+                            <input type="hidden" name="arrival_day" value="{{book.arrival_day}}">
                             <input type="submit" value="編集">
                         </form>
                     </td>
